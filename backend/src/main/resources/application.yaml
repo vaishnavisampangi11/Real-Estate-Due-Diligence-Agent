@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: agent
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/real_estate_due_diligence}
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:tiger}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            client-authentication-method: client_secret_post
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          microsoft:
+            client-id: ${MICROSOFT_CLIENT_ID:microsoft-client-id-placeholder}
+            client-secret: ${MICROSOFT_CLIENT_SECRET:microsoft-client-secret-placeholder}
+            client-name: Microsoft
+            provider: microsoft
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          microsoft:
+            authorization-uri: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/common/oauth2/v2.0/token
+            jwk-set-uri: https://login.microsoftonline.com/common/discovery/v2.0/keys
+            user-info-uri: https://graph.microsoft.com/oidc/userinfo
+            user-name-attribute: preferred_username
+
+server:
+  port: 8081
+
+application:
+  frontend:
+    redirect-uri: ${FRONTEND_REDIRECT_URI:http://localhost:5174/oauth2/redirect}
+    login-uri: ${FRONTEND_LOGIN_URI:http://localhost:5174/login}
+    complete-oauth-registration-uri: ${FRONTEND_COMPLETE_OAUTH_REGISTRATION_URI:http://localhost:5174/complete-oauth-registration}
+  security:
+    jwt:
+      secret-key: ${JWT_SECRET_KEY:dGVzdHNlY3JldGtleWZvcmhlbHBpbmdidWlsZGluZ3RoZXJlYWxlc3RhdGVkdWVkaWxpZ2VuY2VwbGF0Zm9ybQ==}
+      expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
+
+logging:
+  level:
+    org.springframework.security.oauth2: DEBUG

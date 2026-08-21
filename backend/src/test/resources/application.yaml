@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: agent-test
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/real_estate_due_diligence
+    username: postgres
+    password: tiger
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-google-client-id
+            client-secret: test-google-client-secret
+            client-authentication-method: client_secret_post
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+          microsoft:
+            client-id: test-microsoft-client-id
+            client-secret: test-microsoft-client-secret
+            client-name: Microsoft
+            provider: microsoft
+            scope:
+              - openid
+              - profile
+              - email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+        provider:
+          microsoft:
+            authorization-uri: https://login.microsoftonline.com/common/oauth2/v2.0/authorize
+            token-uri: https://login.microsoftonline.com/common/oauth2/v2.0/token
+            jwk-set-uri: https://login.microsoftonline.com/common/discovery/v2.0/keys
+            user-info-uri: https://graph.microsoft.com/oidc/userinfo
+            user-name-attribute: preferred_username
+
+server:
+  port: 8081
+
+application:
+  frontend:
+    redirect-uri: http://localhost:5174/oauth2/redirect
+    login-uri: http://localhost:5174/login
+    complete-oauth-registration-uri: http://localhost:5174/complete-oauth-registration
+  security:
+    jwt:
+      secret-key: dGVzdHNlY3JldGtleWZvcmhlbHBpbmdidWlsZGluZ3RoZXJlYWxlc3RhdGVkdWVkaWxpZ2VuY2VwbGF0Zm9ybQ==
+      expiration: 86400000
